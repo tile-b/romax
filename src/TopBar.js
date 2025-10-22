@@ -5,6 +5,7 @@ import logo from './img/romaxLogo.png'; // adjust path if needed
 
 export default function TopBar() {
   return (
+    <>
 <Box
   sx={{
     bgcolor: 'transparent',
@@ -15,7 +16,8 @@ export default function TopBar() {
     mx: 'auto',                      // centers it horizontally
     px: 2,
     py: 1,
-    gap: 4                           // optional fine-tuning of spacing
+    gap: 4,                           // optional fine-tuning of spacing
+    borderBottom: '1px solid #001788',  // light border for separation
   }}
 >
 
@@ -74,7 +76,7 @@ export default function TopBar() {
         <Typography >
           Saljemo brzom poštom - danas za sutra. Ukoliko želite veće količine ili ste pravno lice slobodno nas{' '}
           <b style={{ color: '#1a3a82' }}>
-            Kontaktirajte
+            Kontaktirajte.
           </b>
         </Typography>
         {/* <Typography sx={{ fontSize: 13 }}>
@@ -83,5 +85,17 @@ export default function TopBar() {
         </Typography> */}
       </Box>
     </Box>
+            <Typography sx={{ 
+                fontSize: 35,
+                color: '#5e6167',
+                fontWeight: 'bold', 
+                py: 2,
+                px: 3,
+                maxWidth: 1200,                  // keeps layout centered
+                mx: 'auto',  
+                }}>
+          Streč Folija
+        </Typography>
+        </>
   );
 }

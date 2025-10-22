@@ -33,10 +33,6 @@ export default function Products() {
             '&:hover img': {
               transform: 'scale(1.05)',
             },
-            '&:hover button': {
-              opacity: 1,
-              visibility: 'visible',
-            },
           }}
         >
           <Box sx={{ mb: 1 }}>
@@ -55,11 +51,11 @@ export default function Products() {
             variant="contained"
             sx={{
               mt: 1,
-              bgcolor: 'black',
+              bgcolor: '#0f2352ff',
               color: 'white',
-              opacity: 0,
-              visibility: 'hidden',
-              transition: 'opacity 0.3s ease, visibility 0.3s ease',
+                        '&:hover': {
+              bgcolor: '#173272ff',
+            },
             }}
           >
             Dodaj u korpu
