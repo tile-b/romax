@@ -1,0 +1,81 @@
+.headerTopBar {
+    background-color:  #122d5d;
+    position: sticky;
+    z-index: 9;
+    top: 0;
+    padding: 5px 15px;
+}
+
+
+.row{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1px 50px;
+}
+
+.spanTop{
+    padding-left: 25px;
+    padding-right: 25px;
+    color: rgb(172, 172, 172);
+
+}
+.spanTop:hover{
+    color: white;
+    cursor: pointer;
+}
+
+.ico{
+    padding-right: 10px;
+    width: 20px;
+}
+.hovWhite {
+    color:  #062a45;
+    font-size: 20px;
+}
+
+.hovWhite:hover{
+    color: #ffff;
+    cursor: pointer;
+}
+@media only screen and (min-width: 1150px) {
+
+    .hovWhite{
+        height: 9vw;
+        display: flex;
+        align-items: flex-end;
+
+    }
+
+}
+.ajp{
+  
+        text-decoration: none;
+        color: inherit;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font: inherit;
+        cursor: pointer;
+
+}
+
+@media only screen and (max-width: 980px) {
+
+    .nestani{
+display: none;
+
+    }
+    .spanTop{
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .ee{
+        padding-left: 0;
+    }
+  }
+
+  .boja{
+    color: rgb(172, 172, 172);
+  }
