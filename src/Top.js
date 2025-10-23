@@ -4,14 +4,14 @@ import { Facebook, Instagram } from '@mui/icons-material';
 const Top = () => {
     return(
                 <div className="headerTopBar">
-                <div className="row">
+                <div className="row nestani">
                   <label className='boja'>Porucite telefonom:</label>
-                    <span className="spanTop">
+                    <span className="spanTop nestani">
                         <a href="tel:00381658557973" className="ajp">
                             065-123 3444 - Dušan
                         </a>
                     </span>                    
-                    <span className="spanTop">
+                    <span className="spanTop nestani">
                         <a href="tel:00381658557973" className="ajp">
                             065-123 3555 - Nenad
                         </a>

@@ -1,67 +1,103 @@
-import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import folija25 from './img/folija25.png';
 import folija5 from './img/folija5.png';
+import { useCart } from './CartContext'; // <-- 1. IMPORT THE HOOK
 
 const products = [
-  { id: 1, name: 'Streč folija ručna, 2.5kg', price: '2.060 RSD', img: folija25 },
-  { id: 2, name: 'Streč folija ručna, 5kg', price: '3.250 RSD', img: folija5 },
+{ id: 1, name: 'Streč folija ručna, 2.5kg', priceDisplay: '2.060 RSD', price: 2060, img: folija25 },
+  { id: 2, name: 'Streč folija ručna, 5kg', priceDisplay: '3.250 RSD', price: 3250, img: folija5 },
 ];
 
 export default function Products() {
+  const { addToCart } = useCart(); // <-- 2. GET THE FUNCTION FROM CONTEXT
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: 6,
-        mt: 4,
-        flexWrap: 'wrap',
-      }}
-    >
-      {products.map((p) => (
-        <Box
-          key={p.id}
-          sx={{
-            width: 250,
-            textAlign: 'center',
-            p: 2,
-            position: 'relative',
-            '& img': {
-              transition: 'transform 0.3s ease',
-            },
-            '&:hover img': {
-              transform: 'scale(1.05)',
-            },
-          }}
-        >
-          <Box sx={{ mb: 1 }}>
-            <img
-              src={p.img}
-              alt={p.name}
-              style={{ width: '100%', height: 'auto', borderRadius: 4 }}
-            />
-          </Box>
+    <Box sx={{ py: 6 }}>
+      {/* ... (your Typography components remain the same) ... */}
+      <Typography
+        variant="h5"
+        sx={{
+          textAlign: 'center',
+          fontSize: 35,
+          fontWeight: 'bold',
+          mb: 1,
+          color: '#0f2352',
+        }}
+      >
+        Streč Folija
+      </Typography>
+      <Typography
+        sx={{
+          textAlign: 'center',
+          color: 'gray',
+          fontSize: 15,
+          mb: 4,
+        }}
+      >
+        Ručne streč folije visoke kvalitete — idealne za pakovanje i zaštitu robe.
+      </Typography>
 
-          <Typography sx={{ color: 'gray', fontSize: 13 }}>STREČ FOLIJE</Typography>
-          <Typography sx={{ fontSize: 15 }}>{p.name}</Typography>
-          <Typography sx={{ fontWeight: 'bold', mt: 1 }}>{p.price}</Typography>
-
-          <Button
-            variant="contained"
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 6,
+          flexWrap: 'wrap',
+        }}
+      >
+        {products.map((p) => (
+          <Box
+            key={p.id}
             sx={{
-              mt: 1,
-              bgcolor: '#0f2352ff',
-              color: 'white',
-                        '&:hover': {
-              bgcolor: '#173272ff',
-            },
+              width: 250,
+              textAlign: 'center',
+              p: 2,
+              borderRadius: 2,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              backgroundColor: 'white',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              '& img': {
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              },
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              },
+              '&:hover img': {
+                transform: 'scale(1.05)',
+                boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+              },
             }}
           >
-            Dodaj u korpu
-          </Button>
-        </Box>
-      ))}
+            <Box sx={{ mb: 1 }}>
+              <img
+                src={p.img}
+                alt={p.name}
+                style={{ width: '100%', height: 'auto', borderRadius: 4 }}
+              />
+            </Box>
+
+            <Typography sx={{ color: 'gray', fontSize: 13 }}>STREČ FOLIJE</Typography>
+            <Typography sx={{ fontSize: 15 }}>{p.name}</Typography>
+            <Typography sx={{ fontWeight: 'bold', mt: 1 }}>{p.price}</Typography>
+
+            <Button
+              variant="contained"
+              sx={{
+                mt: 1,
+                bgcolor: '#0f2352ff',
+                color: 'white',
+                '&:hover': {
+                  bgcolor: '#173272ff',
+                },
+              }}
+              onClick={() => addToCart(p)} // <-- 3. UPDATE ONCLICK
+            >
+              Dodaj u korpu
+            </Button>
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }

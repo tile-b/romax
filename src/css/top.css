@@ -79,3 +79,9 @@ display: none;
   .boja{
     color: rgb(172, 172, 172);
   }
+
+    .customLink{
+text-decoration: none;
+color: inherit;
+
+    }
