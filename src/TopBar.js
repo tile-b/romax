@@ -1,9 +1,21 @@
+import React from 'react';
 import { Box, Typography, useTheme, useMediaQuery, Badge } from '@mui/material'; // Import Badge
-import { LocationOn, ShoppingCart } from '@mui/icons-material';
+import { ShoppingCart } from '@mui/icons-material';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
+import MenuIcon from '@mui/icons-material/Menu';
 import logo from './img/romaxLogo.png';
+import doc from './img/document.png';
 import { useCart } from './CartContext'; // <-- 1. IMPORT THE HOOK
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Drawer from '@mui/material/Drawer';
+import Button from '@mui/material/Button';
 
 export default function TopBar() {
   const theme = useTheme();
@@ -12,6 +24,55 @@ export default function TopBar() {
 
   const [showCart, setShowCart] = useState(false);
 
+  const [open, setOpen] = React.useState(false);
+
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
+
+const DrawerList = (
+  <Box sx={{ width: 200 }} role="presentation" onClick={toggleDrawer(false)}>
+    <List>
+
+      <ListItem disablePadding>
+        <ListItemButton>
+          <ListItemIcon sx={{ color: 'white', minWidth: 50, '& svg': { fontSize: 30 } }}>
+            <InfoIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="O Nama"
+            primaryTypographyProps={{ fontWeight: 'bold', fontSize: '1.3rem' }}
+          />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem disablePadding>
+        <ListItemButton>
+          <ListItemIcon sx={{ minWidth: 50 }}>
+            <img src={doc} alt="P" style={{ height: 32 }} />
+          </ListItemIcon>
+          <ListItemText
+            primary="Proizvodi"
+            primaryTypographyProps={{ fontWeight: 'bold', fontSize: '1.3rem' }}
+          />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem disablePadding>
+        <ListItemButton>
+          <ListItemIcon sx={{ color: 'white', minWidth: 50, '& svg': { fontSize: 30 } }}>
+            <ContactPhoneIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Kontakt"
+            primaryTypographyProps={{ fontWeight: 'bold', fontSize: '1.3rem' }}
+          />
+        </ListItemButton>
+      </ListItem>
+
+    </List>
+  </Box>
+);
 useEffect(() => {
   const handleScroll = () => {
     if (window.scrollY > 200) { // show after scrolling 200px
@@ -91,20 +152,7 @@ useEffect(() => {
               // mt: isMobile ? 1 : 0, // No longer needed, parent aligns
             }}
           >
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                cursor: 'pointer',
-                transition: '0.3s',
-                '&:hover': { color: '#1a3a82' },
-              }}
-            >
-              <LocationOn />
-              <Typography sx={{ fontSize: 14 }}>Lokacija</Typography>
-            </Box>
-
+            <Link to="/cart" className='customLink'>
             <Box
               sx={{
                 display: 'flex',
@@ -116,12 +164,34 @@ useEffect(() => {
               }}
             >
 <Badge badgeContent={totalItemsInCart} color="error">
-  <Link to="/cart" className='customLink'>
+  
                 <ShoppingCart />
-                </Link>
+               
               </Badge>
-              <Typography sx={{ fontSize: 14 }}>Korpa</Typography>
-            </Box>
+            </Box> </Link>
+    <Button onClick={toggleDrawer(true)}>
+                        <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                cursor: 'pointer',
+                transition: '0.3s',
+                '&:hover': { color: '#1a3a82' },
+              }}
+            
+            >  
+              <MenuIcon />
+            </Box>      </Button>
+      <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}
+      PaperProps={{
+      sx: {
+backgroundColor: '#2e3d58ff',
+color: 'white',
+      }}}
+      >
+        {DrawerList}
+      </Drawer>
           </Box>
         </Box>
         {/* END: New Wrapper */}
@@ -129,7 +199,7 @@ useEffect(() => {
         {/* Right - Info box */}
         <Box
           sx={{
-            display: 'flex',
+            display: isMobile ? 'none' : 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center',
@@ -138,7 +208,6 @@ useEffect(() => {
             borderRadius: 1,
             maxWidth: 380,
             fontSize: 19,
-            // mt: isMobile ? 2 : 0, // No longer needed, parent 'gap' handles this
             width: isMobile ? '100%' : 'auto', // Ensure it takes width on mobile
           }}
         >
@@ -153,6 +222,7 @@ useEffect(() => {
       </Box>
     </Box>
     {showCart && (
+            <Link to="/cart" className="customLink" style={{ color: 'inherit' }}>
   <Box
     sx={{
       position: 'fixed',
@@ -168,11 +238,11 @@ useEffect(() => {
     }}
   >
     <Badge badgeContent={totalItemsInCart} color="error">
-      <Link to="/cart" className="customLink" style={{ color: 'inherit' }}>
+
         <ShoppingCart />
-      </Link>
+
     </Badge>
-  </Box>
+  </Box>      </Link>
 )}
 </>
   );
