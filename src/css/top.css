@@ -80,8 +80,20 @@ display: none;
     color: rgb(172, 172, 172);
   }
 
-    .customLink{
-text-decoration: none;
-color: inherit;
+.customLink {
+  text-decoration: none;   /* remove underline */
+  color: inherit;          /* keep the child’s color */
+  display: inline-flex;    /* preserve layout for buttons/icons */
+}
 
-    }
+.customLink:visited {
+  color: inherit;          /* no purple visited color */
+}
+
+.customLink:hover {
+  color: inherit;          /* don’t change color on hover */
+}
+
+.customLink:active {
+  color: inherit;          /* same when clicked */
+}

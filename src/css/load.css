@@ -1,0 +1,79 @@
+/* From Uiverse.io by Satwinder04 */ 
+.loader {
+  /* background-color: blue; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.loader-text {
+    padding-top: 20px;
+  font-size: 24px;
+  color: rgb(26, 30, 145);
+  margin-bottom: 20px;
+  align-self: center;
+  font-weight: 600;
+}
+
+.loader-bar {
+  width: 30%;
+  height: 10px;
+  border-radius: 5px;
+  background-color: rgb(31, 70, 161);
+  animation: loader-bar-animation 4s ease-in-out infinite;
+}
+
+@keyframes loader-bar-animation {
+  0% {
+    /* transform: translateX(-100%) rotate(270deg); */
+    transform: translateX(-100%);
+  }
+
+  50% {
+    /* transform: translateX(100%) rotate(-90deg); */
+    transform: translateX(100%);
+  }
+
+  100% {
+    /* transform: translateX(-100%) rotate(270deg); */
+    transform: translateX(-100%);
+  }
+}
+
+.nice-button {
+  background-color: #1a3a82;
+  color: white;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* space between text and arrow */
+}
+
+.nice-button::after {
+  content: "↗";            /* 45° arrow */
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.nice-button:hover {
+  background-color: #2e56c4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.nice-button:hover::after {
+  transform: translate(3px, -3px); /* subtle arrow movement */
+}
+
+.nice-button:active {
+  background-color: #15306a;
+  transform: translateY(0);
+}

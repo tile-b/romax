@@ -1,11 +1,11 @@
 import React from 'react';
-import { Box, Typography, useTheme, useMediaQuery, Badge } from '@mui/material'; // Import Badge
+import { Box, useTheme, useMediaQuery, Badge } from '@mui/material'; // Import Badge
 import { ShoppingCart } from '@mui/icons-material';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from './img/romaxLogo.png';
-import doc from './img/document.png';
+import doc from './img/strec.png';
 import { useCart } from './CartContext'; // <-- 1. IMPORT THE HOOK
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -19,7 +19,7 @@ import Button from '@mui/material/Button';
 
 export default function TopBar() {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { totalItemsInCart } = useCart();
 
   const [showCart, setShowCart] = useState(false);
@@ -35,6 +35,7 @@ const DrawerList = (
     <List>
 
       <ListItem disablePadding>
+         <Link to="/about" className='customLink'>
         <ListItemButton>
           <ListItemIcon sx={{ color: 'white', minWidth: 50, '& svg': { fontSize: 30 } }}>
             <InfoIcon />
@@ -44,21 +45,25 @@ const DrawerList = (
             primaryTypographyProps={{ fontWeight: 'bold', fontSize: '1.3rem' }}
           />
         </ListItemButton>
+        </Link>
       </ListItem>
 
       <ListItem disablePadding>
+        <Link to="/" className='customLink'>
         <ListItemButton>
           <ListItemIcon sx={{ minWidth: 50 }}>
-            <img src={doc} alt="P" style={{ height: 32 }} />
+            <img src={doc} alt="P" style={{ height: 32, opacity:0.8 }} />
           </ListItemIcon>
           <ListItemText
             primary="Proizvodi"
             primaryTypographyProps={{ fontWeight: 'bold', fontSize: '1.3rem' }}
           />
         </ListItemButton>
+        </Link>
       </ListItem>
 
       <ListItem disablePadding>
+        <Link to="/about" className='customLink'>
         <ListItemButton>
           <ListItemIcon sx={{ color: 'white', minWidth: 50, '& svg': { fontSize: 30 } }}>
             <ContactPhoneIcon />
@@ -68,6 +73,7 @@ const DrawerList = (
             primaryTypographyProps={{ fontWeight: 'bold', fontSize: '1.3rem' }}
           />
         </ListItemButton>
+        </Link>
       </ListItem>
 
     </List>
@@ -152,7 +158,9 @@ useEffect(() => {
               // mt: isMobile ? 1 : 0, // No longer needed, parent aligns
             }}
           >
-            <Link to="/cart" className='customLink'>
+            {/* Cart */}
+           
+             <Link to="/cart" className='customLink'>
             <Box
               sx={{
                 display: 'flex',
@@ -169,6 +177,9 @@ useEffect(() => {
                
               </Badge>
             </Box> </Link>
+
+         { isMobile ?  (
+          <>
     <Button onClick={toggleDrawer(true)}>
                         <Box
               sx={{
@@ -191,34 +202,59 @@ color: 'white',
       }}}
       >
         {DrawerList}
-      </Drawer>
+      </Drawer> </> ) : ( <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 4, // space between buttons
+    }}
+  >
+    <Link to="/about" className="customLink">
+      <Button
+        sx={{
+          color: '#001788',
+          fontWeight: 'bold',
+          fontSize: '1.4rem',
+          textTransform: 'none',
+          '&:hover': { color: '#1a3a82' },
+        }}
+      >
+        O Nama
+      </Button>
+    </Link>
+
+    <Link to="/" className="customLink">
+      <Button
+        sx={{
+          color: '#001788',
+          fontWeight: 'bold',
+          fontSize: '1.4rem',
+          textTransform: 'none',
+          '&:hover': { color: '#1a3a82' },
+        }}
+      >
+        Proizvodi
+      </Button>
+    </Link>
+
+    <Link to="/contact" className="customLink">
+      <Button
+        sx={{
+          color: '#001788',
+          fontWeight: 'bold',
+          fontSize: '1.4rem',
+          textTransform: 'none',
+          '&:hover': { color: '#1a3a82' },
+        }}
+      >
+        Kontakt
+      </Button>
+    </Link>
+  </Box>) }
           </Box>
         </Box>
         {/* END: New Wrapper */}
 
-        {/* Right - Info box */}
-        <Box
-          sx={{
-            display: isMobile ? 'none' : 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            px: 2,
-            py: 0.5,
-            borderRadius: 1,
-            maxWidth: 380,
-            fontSize: 19,
-            width: isMobile ? '100%' : 'auto', // Ensure it takes width on mobile
-          }}
-        >
-          <Typography sx={{ color: 'red', fontWeight: 'bold' }}>
-            Besplatna dostava u Bačkoj Palanci
-          </Typography>
-          <Typography sx={{ fontSize: isMobile ? 14 : 16 }}>
-            Šaljemo brzom poštom — danas za sutra. Ukoliko želite veće količine ili ste pravno lice slobodno nas{' '}
-            <b style={{ color: '#1a3a82' }}>Kontaktirajte.</b>
-          </Typography>
-        </Box>
       </Box>
     </Box>
     {showCart && (
