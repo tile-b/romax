@@ -3,6 +3,9 @@ import TopBar from './TopBar';
 import Products from './Products';
 import Cart from './Cart';
 import About from './About';
+import Footer from './Footer';
+import HomeSection from './HomeSection';
+import Contact from './Contact';
 import { Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -17,13 +20,17 @@ function App() {
           element={
             <>
     <Products />
-    <div style={{marginTop:500}}></div>
+    <HomeSection />
+
 </>
           } 
         />
         <Route path="/about" element={<About />} />
       <Route path="/cart" element={<Cart />} />
+<Route path="/contact" element={<Contact />} />
+            
     </Routes>
+        <Footer />
     </>
   );
 }

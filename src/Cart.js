@@ -13,7 +13,7 @@ export default function Cart() {
   const { cartItems, cartTotal, addToCart, decreaseQuantity, removeFromCart } = useCart();
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', py: 4, px: 2 }}>
+    <Box sx={{ maxWidth: 800, mx: 'auto', py: 4, px: 2, marginBottom: '50vw' }}>
       <Typography
         variant="h4"
         sx={{

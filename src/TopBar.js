@@ -63,7 +63,7 @@ const DrawerList = (
       </ListItem>
 
       <ListItem disablePadding>
-        <Link to="/about" className='customLink'>
+        <Link to="/contact" className='customLink'>
         <ListItemButton>
           <ListItemIcon sx={{ color: 'white', minWidth: 50, '& svg': { fontSize: 30 } }}>
             <ContactPhoneIcon />
@@ -265,12 +265,13 @@ color: 'white',
       bottom: 24,
       right: 24,
       borderRadius: '50%',
-      boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+      boxShadow: '0px 0px 10px 1.5px rgba(0,0,0,0.5)',
       p: 1.5,
       cursor: 'pointer',
       zIndex: 2000,
       transition: 'transform 0.3s ease',
       '&:hover': { transform: 'scale(1.1)' },
+      bgcolor: '#ffffff',
     }}
   >
     <Badge badgeContent={totalItemsInCart} color="error">
