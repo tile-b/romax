@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Typography, Link, IconButton, Divider } from '@mui/material';
+import { Box, Typography, IconButton, Divider } from '@mui/material';
 import { Facebook, Instagram, MailOutline } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -26,13 +27,13 @@ export default function Footer() {
           mb: 2,
         }}
       >
-        <Link href="/about" underline="none" sx={{ color: 'white', '&:hover': { color: '#64b5f6' } }}>
+        <Link to="/about" className='customLink'>
           O nama
         </Link>
-        <Link href="/" underline="none" sx={{ color: 'white', '&:hover': { color: '#64b5f6' } }}>
+        <Link to="/" className='customLink'>
           Proizvodi
         </Link>
-        <Link href="/contact" underline="none" sx={{ color: 'white', '&:hover': { color: '#64b5f6' } }}>
+        <Link to="/contact" className='customLink'>
           Kontakt
         </Link>
       </Box>

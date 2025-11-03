@@ -7,13 +7,28 @@ import Footer from './Footer';
 import HomeSection from './HomeSection';
 import Contact from './Contact';
 import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 function App() {
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
   return (
     <>
 
         <Top />
     <TopBar />
+
+    <ScrollToTop />
         <Routes>
             <Route 
           path="/" 
