@@ -183,99 +183,76 @@ export default function Cart() {
       )}
 
       {/* Modal za porudžbinu */}
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <Box
-          sx={{
-            maxWidth: 400,
-            bgcolor: 'white',
-            borderRadius: 2,
-            p: 4,
-            mx: 'auto',
-            mt: '15vh',
-            boxShadow: 5,
-          }}
-          component="form"
-          onSubmit={handleSendEmail}
-        >
-          <Typography variant="h6" fontWeight="bold" mb={2} color="#0f2352">
-            Unesite podatke za porudžbinu
-          </Typography>
+<Modal open={open} onClose={() => setOpen(false)}>
+  <Box
+    component="form"
+    onSubmit={handleSendEmail}
+    sx={{
+      width: { xs: '80%', sm: 450 },      // Smaller on mobile
+      maxHeight: { xs: '70vh', sm: '90vh' }, // Less tall on phone
+      overflowY: 'auto',                  // Scroll if content too long
+      bgcolor: 'white',
+      borderRadius: 2,
+      p: { xs: 2, sm: 4 },                // Less padding on mobile
+      mx: 'auto',
+      mt: { xs: '3vh', sm: '15vh' },      // Move closer to top on mobile
+      boxShadow: 6,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 1.5,                            // Slightly smaller spacing between fields
+    }}
+  >
+    <Typography variant="h6" fontWeight="bold" mb={1} color="#0f2352" textAlign="center">
+      Unesite podatke za porudžbinu
+    </Typography>
+<Box sx={{ display: 'flex', gap: 1.5, flexDirection: { xs: 'row', sm: 'row' } }}>
+  <TextField
+    fullWidth
+    label="Ime"
+    name="name"
+    value={formData.name}
+    onChange={handleChange}
+    required
+  />
+  <TextField
+    fullWidth
+    label="Prezime"
+    name="surname"
+    value={formData.surname}
+    onChange={handleChange}
+    required
+  />
+</Box>
 
-          <TextField
-            fullWidth
-            label="Ime"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Prezime"
-            name="surname"
-            value={formData.surname}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            type="email"
-            label="Email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Telefon"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Adresa"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Mesto stanovanja"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            multiline
-            rows={2}
-            label="Napomena (opciono)"
-            name="note"
-            value={formData.note}
-            onChange={handleChange}
-            sx={{ mb: 3 }}
-          />
+    <TextField fullWidth type="email" label="Email" name="email" value={formData.email} onChange={handleChange} required />
+    <TextField fullWidth label="Telefon" name="phone" value={formData.phone} onChange={handleChange} required />
+    <Box sx={{ display: 'flex', gap: 1.5, flexDirection: { xs: 'row', sm: 'row' } }}>
+    <TextField fullWidth label="Adresa" name="address" value={formData.address} onChange={handleChange} required />
+    <TextField fullWidth label="Mesto stanovanja" name="city" value={formData.city} onChange={handleChange} required /></Box>
+    <TextField fullWidth multiline rows={2} label="Napomena (opciono)" name="note" value={formData.note} onChange={handleChange} />
 
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Ukupno:</strong> {formatPrice(cartTotal)}
-          </Typography>
+    <Typography variant="body2" sx={{ mt: 1 }}>
+      Ukupno: <b>{formatPrice(cartTotal)}</b>
+    </Typography>
 
-          <Button type="submit" variant="contained" fullWidth sx={{ bgcolor: '#0f2352' }}>
-            Pošalji porudžbinu
-          </Button>
-        </Box>
-      </Modal>
+    <Button
+      type="submit"
+      variant="contained"
+      fullWidth
+      sx={{
+        bgcolor: '#0f2352',
+        mt: 1.5,
+        py: 1.2,             // slightly smaller button
+        fontSize: { xs: '0.875rem', sm: '1rem' }, // smaller text on phone
+        '&:hover': { bgcolor: '#173272' },
+      }}
+    >
+      Pošalji porudžbinu
+    </Button>
+  </Box>
+</Modal>
+
+
     </Box>
   );
 }
