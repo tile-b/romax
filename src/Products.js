@@ -4,8 +4,8 @@ import folija5 from './img/folija5.png';
 import { useCart } from './CartContext'; // <-- 1. IMPORT THE HOOK
 
 const products = [
-{ id: 1, name: 'Streč folija ručna, 2.5kg', priceDisplay: '1.060 RSD', price: 1060, img: folija25 },
-  { id: 2, name: 'Streč folija ručna, 5kg', priceDisplay: '1.650 RSD', price: 1650, img: folija5 },
+{ id: 1, name: 'Streč folija ručna, 2.5kg', priceDisplay: '550 RSD',price: 550, img: folija25 },
+  { id: 2, name: 'Streč folija ručna, 5kg', priceDisplay: '1.000 RSD', price: 1000, img: folija5 },
 ];
 
 export default function Products() {
