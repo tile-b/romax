@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import logo from './img/romaxLogo.png';
 import doc from './img/strec.png';
 import { useCart } from './CartContext'; // <-- 1. IMPORT THE HOOK
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -21,6 +21,9 @@ export default function TopBar() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { totalItemsInCart } = useCart();
+
+  const location = useLocation();
+  const isCartPage = location.pathname === '/cart';
 
   const [showCart, setShowCart] = useState(false);
 
@@ -159,7 +162,7 @@ useEffect(() => {
             }}
           >
             {/* Cart */}
-           
+            {!isCartPage && (
              <Link to="/cart" className='customLink'>
             <Box
               sx={{
@@ -171,12 +174,12 @@ useEffect(() => {
                 '&:hover': { color: '#1a3a82' },
               }}
             >
-<Badge badgeContent={totalItemsInCart} color="error">
-  
+              <Badge badgeContent={totalItemsInCart} color="error">
                 <ShoppingCart />
-               
               </Badge>
-            </Box> </Link>
+            </Box>
+            </Link>
+            )}
 
          { isMobile ?  (
           <>
@@ -257,8 +260,8 @@ color: 'white',
 
       </Box>
     </Box>
-    {showCart && (
-            <Link to="/cart" className="customLink" style={{ color: 'inherit' }}>
+    {showCart && !isCartPage && (
+      <Link to="/cart" className="customLink" style={{ color: 'inherit' }}>
   <Box
     sx={{
       position: 'fixed',

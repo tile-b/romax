@@ -77,10 +77,10 @@ export default function Contact() {
                 </Typography>
               </Box>
               <Typography variant="body1" sx={{ ml: 4 }}>
-                <strong>PIB:</strong> 0044
+                <strong>PIB:</strong> 115318379
               </Typography>
               <Typography variant="body1" sx={{ ml: 4 }}>
-                <strong>Matični broj:</strong> 00
+                <strong>Matični broj:</strong> 22141317
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                 <EmailIcon sx={{ color: '#1a3a82', mr: 1 }} />

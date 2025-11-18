@@ -42,9 +42,9 @@ export default function HomeSection() {
         sx={{ maxWidth: 800, mb: 5 }}
       >
         {[
-          { title: 'Debljina', desc: '15 – 23 mikrona' },
+          { title: 'Debljina', desc: '23 mikrona' },
           { title: 'Širina rolne', desc: '500 mm' },
-          { title: 'Boja', desc: 'Providna ili crna' },
+          { title: 'Boja', desc: 'Providna' },
           { title: 'Zatezna čvrstoća', desc: 'Izuzetno visoka' },
         ].map((item, i) => (
           <Grid item xs={6} sm={3} key={i}>

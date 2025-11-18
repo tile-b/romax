@@ -152,7 +152,7 @@ export default function About() {
         firmama koje svakodnevno koriste foliju u proizvodnji i transportu.
         <br />
         <br />
-        📄 <strong>PIB:</strong> 00  <strong>Matični broj:</strong> 00
+        📄 <strong>PIB:</strong> 115318379  <strong>Matični broj:</strong> 22141317
       </Typography>
 
       {/* Naši proizvodi */}
@@ -172,7 +172,7 @@ export default function About() {
         {[
           {
             title: 'Streč folija 5 kg',
-            desc: 'Profesionalna folija za mašinsko i ručno pakovanje. Idealna za proizvodne pogone, distributivne centre i magacine. Odlikuje se visokom elastičnošću i otpornosti na pucanje.',
+            desc: 'Profesionalna folija za ručno pakovanje. Idealna za proizvodne pogone, distributivne centre i magacine. Odlikuje se visokom elastičnošću i otpornosti na pucanje.',
           },
           {
             title: 'Streč folija 2,5 kg',
