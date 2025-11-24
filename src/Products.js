@@ -1,136 +1,255 @@
-import React, { useState, useRef } from 'react';
-import { Box, Typography, Button, IconButton, Snackbar, Alert } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, Button, IconButton, Snackbar, Alert, Card, CardContent, Grid, Divider, Chip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useCart } from './CartContext';
 import productsData from './productsData';
 
 export default function Products() {
-  const { addToCart } = useCart();
-  const priceTableRef = useRef(null);
+  const { addToCart, cartItems } = useCart();
 
-  const [quantities, setQuantities] = useState({ 1: 1, 2: 1 }); // key = product id
+  // Initialize quantities for all products
+  const initialQuantities = {};
+  productsData.forEach(p => initialQuantities[p.id] = 1);
+  const [quantities, setQuantities] = useState(initialQuantities);
+
   const [openNotification, setOpenNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
 
   const getPrice = (product, quantity) => {
-    const range = product.priceRanges.find(r => quantity >= r.min && quantity <= r.max);
+    // Find the range that covers the current quantity
+    // If quantity > max defined range, use the last range (lowest price usually)
+    // Actually the data has max: 30, but let's assume if > 30 it takes the best price or we cap it?
+    // The original code used: quantity >= r.min && quantity <= r.max
+    // If quantity is 31, it might fail if not handled. Let's make it robust.
+
+    let range = product.priceRanges.find(r => quantity >= r.min && quantity <= r.max);
+    if (!range) {
+      // If not found, check if it's above the highest max
+      const maxRange = product.priceRanges.reduce((prev, current) => (prev.max > current.max) ? prev : current);
+      if (quantity > maxRange.max) {
+        range = maxRange;
+      } else {
+        // Fallback to first
+        range = product.priceRanges[0];
+      }
+    }
     return range ? range.price : product.priceRanges[0].price;
   };
 
   const handleChange = (id, val) => {
-    setQuantities(prev => ({ ...prev, [id]: val }));
+    const newQty = Math.max(1, Number(val));
+    setQuantities(prev => ({ ...prev, [id]: newQty }));
   };
 
-  const handleIncrement = (id) => handleChange(id, Number(quantities[id]) + 1);
-  const handleDecrement = (id) => handleChange(id, Math.max(1, Number(quantities[id]) - 1));
+  const handleIncrement = (id) => handleChange(id, Number(quantities[id] || 1) + 1);
+  const handleDecrement = (id) => handleChange(id, Math.max(1, Number(quantities[id] || 1) - 1));
 
   const orderProduct = (product) => {
-    const qty = Number(quantities[product.id]);
-    const price = getPrice(product, qty);
-    addToCart({ ...product, quantity: qty, price });
-    setNotificationMessage(`${product.name} je uspešno dodata u korpu!`);
+    const qtyToAdd = Number(quantities[product.id]);
+
+    // Check if item is already in cart to calculate correct bulk price
+    const existingItem = cartItems.find(item => item.id === product.id);
+    const currentCartQty = existingItem ? existingItem.quantity : 0;
+    const newTotalQty = currentCartQty + qtyToAdd;
+
+    // Calculate price based on the NEW total quantity
+    const price = getPrice(product, newTotalQty);
+
+    addToCart({ ...product, quantity: qtyToAdd, price });
+
+    setNotificationMessage(`${product.name} (x${qtyToAdd}) je dodata u korpu!`);
     setOpenNotification(true);
   };
 
-  const scrollToTable = () => priceTableRef.current?.scrollIntoView({ behavior: 'smooth' });
-
   return (
-    <Box sx={{ py: 6 }}>
-      <Typography variant="h5" sx={{ textAlign: 'center', fontSize: 35, fontWeight: 'bold', mb: 1, color: '#0f2352' }}>
-        Streč Folija
-      </Typography>
-      <Typography sx={{ textAlign: 'center', color: 'gray', fontSize: 15, mb: 4 }}>
-        Ručne streč folije visoke kvalitete — idealne za pakovanje i zaštitu robe.
-      </Typography>
-
-      {/* Product Cards */}
-      <Box sx={{ display: 'flex', justifyContent: 'center', gap: { xs: 1, sm: 6 }, flexWrap: { xs: 'nowrap', sm: 'wrap' }, overflowX: { xs: 'auto', sm: 'visible' } }}>
-        {productsData.map((p) => (
-          <Box key={p.id} sx={{ width: { xs: 160, sm: 250 }, flex: '0 0 auto', textAlign: 'center', p: 1, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', backgroundColor: 'white', '& img': { transition: 'transform 0.3s ease' }, '&:hover img': { transform: 'scale(1.05)' } }}>
-            <img src={p.img} alt={p.name} style={{ width: '100%', borderRadius: 4 }} />
-            <Typography sx={{ fontWeight: 'bold', mt: 1 }}>{p.name}</Typography>
-            <Button variant="contained" sx={{ mt: 1, bgcolor: '#0f2352', '&:hover': { bgcolor: '#173272' } }} onClick={scrollToTable}>Odaberi</Button>
-          </Box>
-        ))}
-      </Box>
-
-      {/* Price Table */}
-      <Box ref={priceTableRef} sx={{ mt: 6, p: 3, backgroundColor: 'white', borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)', maxWidth: 700, mx: 'auto' }}>
-        <Typography variant="h6" sx={{ textAlign: 'center', fontWeight: 'bold', color: '#0f2352', mb: 2 }}>
-          Cene po Količini
+    <Box sx={{ py: 8, px: 2, backgroundColor: '#f8f9fa', minHeight: { xs: "100vh", md: "40vh" }, }}>
+      <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
+        <Typography variant="h3" sx={{ textAlign: 'center', fontWeight: 800, mb: 2, color: '#0f2352' }}>
+          Naša Ponuda
         </Typography>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ background: '#f2f2f2' }}>
-              <th style={{ padding: 10, border: '1px solid #a7a7a7ff' }}>Proizvod</th>
-              <th style={{ padding: 10, border: '1px solid #a7a7a7ff' }}>1–9 kom</th>
-              <th style={{ padding: 10, border: '1px solid #a7a7a7ff' }}>10–19 kom</th>
-              <th style={{ padding: 10, border: '1px solid #a7a7a7ff' }}>20–30 kom</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productsData.map((p) => {
-              const qty = quantities[p.id];
-              const price = getPrice(p, qty);
-              const getHighlightStyle = (priceRange) => {
-                const isHighlighted = qty >= priceRange.min && qty <= priceRange.max;
-                return {
-                  padding: 10,
-                  border: '1px solid #a7a7a7ff',
-                  backgroundColor: isHighlighted ? '#d4dcecff' : 'transparent',
-                  fontWeight: isHighlighted ? 'bold' : 'normal',
-                  color: isHighlighted ? '#3881ffff' : '#b1b1b1ff',
-                  transition: 'all 0.3s ease',
-                };
-              };
-              return (
-             
-                <React.Fragment key={p.id}>
-                  <tr>
-                    <td style={{ padding: 10, border: '1px solid #a7a7a7ff', fontWeight: '400' }}>{p.name}</td>
-                    <td style={getHighlightStyle(p.priceRanges[0])}>{p.priceRanges[0].price} RSD</td>
-                    <td style={getHighlightStyle(p.priceRanges[1])}>{p.priceRanges[1].price} RSD</td>
-                    <td style={getHighlightStyle(p.priceRanges[2])}>{p.priceRanges[2].price} RSD</td>
-                  </tr>
+        <Typography sx={{ textAlign: 'center', color: 'text.secondary', fontSize: 18, mb: 6, maxWidth: 600, mx: 'auto' }}>
+          Vrhunska streč folija za sigurno i efikasno pakovanje. <br />
+          <span style={{ fontSize: '0.9em', opacity: 0.8 }}>Izaberite količinu da biste ostvarili popust.</span>
+        </Typography>
 
-                  {/* Quantity + buttons + order */}
-                  <tr>
-                    <td colSpan="4" style={{ padding: 10, border: '1px solid #a7a7a7ff' }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <b>Količina:</b>
-                        <IconButton size="small" onClick={() => handleDecrement(p.id)}><RemoveIcon /></IconButton>
-                        <input type="number" min="1" value={qty} onChange={(e) => handleChange(p.id, e.target.value)} style={{ width: 50, textAlign: 'center' }} />
-                        <IconButton size="small" onClick={() => handleIncrement(p.id)}><AddIcon /></IconButton>
-                        <Button variant="contained" sx={{ bgcolor: '#0f2352', '&:hover': { bgcolor: '#173272' } }} onClick={() => orderProduct(p)}>Dodaj</Button>
+        <Grid container spacing={4} justifyContent="center">
+          {productsData.map((p) => {
+            const qty = quantities[p.id] || 1;
+
+            // Calculate price for display (just for the current selection)
+            // Note: We show the price for the *selected* quantity, but when added it might be lower if they already have some.
+            // To avoid confusion, we just show the price for the quantity they are selecting right now.
+            const currentPrice = getPrice(p, qty);
+            const totalPrice = qty * currentPrice;
+
+            const inCartItem = cartItems.find(item => item.id === p.id);
+            const inCartQty = inCartItem ? inCartItem.quantity : 0;
+
+            return (
+              <Grid item key={p.id} xs={12} md={6}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    borderRadius: 4,
+                    overflow: 'hidden',
+                    boxShadow: '0 10px 40px -10px rgba(0,0,0,0.1)',
+                    transition: 'transform 0.2s',
+                    '&:hover': { transform: 'translateY(-4px)' },
+                    height: '100%',
+                    position: 'relative',
+                    border: inCartQty > 0 ? '2px solid #4caf50' : 'none'
+                  }}
+                >
+                  {inCartQty > 0 && (
+                    <Chip
+                      icon={<CheckCircleIcon style={{ color: 'white' }} />}
+                      label={`U korpi: ${inCartQty} kom`}
+                      sx={{
+                        position: 'absolute',
+                        top: 10,
+                        left: 10,
+                        bgcolor: '#4caf50',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        zIndex: 2
+                      }}
+                    />
+                  )}
+
+                  {/* Image Section */}
+                  <Box sx={{
+                    width: { xs: '100%', sm: '40%' },
+                    bgcolor: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    p: 2,
+                    borderRight: { sm: '1px solid #eee' },
+                    borderBottom: { xs: '1px solid #eee', sm: 'none' }
+                  }}>
+                    <img
+                      src={p.img}
+                      alt={p.name}
+                      style={{ maxWidth: '100%', maxHeight: 200, objectFit: 'contain' }}
+                    />
+                  </Box>
+
+                  {/* Content Section */}
+                  <CardContent sx={{ flex: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
+                    <Typography variant="h5" fontWeight="bold" gutterBottom color="#0f2352">
+                      {p.name}
+                    </Typography>
+
+                    {/* Price Tiers Visualizer */}
+                    <Box sx={{ mb: 3, mt: 1 }}>
+                      <Typography variant="caption" color="text.secondary" fontWeight="bold" textTransform="uppercase" letterSpacing={1}>
+                        Cenovnik (klikni za odabir)
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+                        {p.priceRanges.map((range, idx) => {
+                          const isActive = qty >= range.min && qty <= range.max;
+                          return (
+                            <Box
+                              key={idx}
+                              onClick={() => handleChange(p.id, range.min)}
+                              sx={{
+                                border: isActive ? '2px solid #0f2352' : '1px solid #e0e0e0',
+                                bgcolor: isActive ? '#eef2ff' : 'transparent',
+                                borderRadius: 2,
+                                px: 1.5, py: 0.5,
+                                textAlign: 'center',
+                                minWidth: 60,
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                '&:hover': {
+                                  borderColor: '#0f2352',
+                                  bgcolor: isActive ? '#eef2ff' : '#f5f5f5'
+                                }
+                              }}
+                            >
+                              <Typography variant="caption" display="block" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                                {range.min}-{range.max} kom
+                              </Typography>
+                              <Typography variant="body2" fontWeight="bold" color={isActive ? '#0f2352' : 'text.primary'}>
+                                {range.price} RSD
+                              </Typography>
+                            </Box>
+                          )
+                        })}
+                      </Box>
+                    </Box>
+
+                    <Divider sx={{ my: 'auto' }} />
+
+                    {/* Controls */}
+                    <Box sx={{ mt: 3 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid #ddd', borderRadius: 3, bgcolor: '#fff' }}>
+                          <IconButton onClick={() => handleDecrement(p.id)} color="primary">
+                            <RemoveIcon fontSize="small" />
+                          </IconButton>
+                          <Typography sx={{ mx: 2, fontWeight: 'bold', minWidth: 20, textAlign: 'center' }}>{qty}</Typography>
+                          <IconButton onClick={() => handleIncrement(p.id)} color="primary">
+                            <AddIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                        <Box sx={{ textAlign: 'right' }}>
+                          <Typography variant="caption" color="text.secondary">Ukupno</Typography>
+                          <Typography variant="h6" fontWeight="bold" color="#0f2352">
+                            {totalPrice.toLocaleString()} RSD
+                          </Typography>
+                        </Box>
                       </Box>
 
-                      {/* Calculation row */}
-                      <Typography sx={{ mt: 1, fontSize: 14, color: 'gray' }}>
-                        Cena: {qty} × {price} RSD = <b>{qty * price} RSD</b>
-                      </Typography>
-                    </td>
-                  </tr>
-                </React.Fragment>
-              );
-            })}
-          </tbody>
-        </table>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        size="large"
+                        startIcon={<ShoppingCartIcon />}
+                        onClick={() => orderProduct(p)}
+                        sx={{
+                          bgcolor: '#0f2352',
+                          borderRadius: 3,
+                          py: 1.5,
+                          textTransform: 'none',
+                          fontSize: '1rem',
+                          fontWeight: 'bold',
+                          '&:hover': { bgcolor: '#1a3b80' }
+                        }}
+                      >
+                        Dodaj u korpu
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+
+        <Box sx={{ mt: 8, textAlign: 'center' }}>
+          <Alert severity="info" sx={{ display: 'inline-flex', maxWidth: 600, mx: 'auto' }}>
+            Za veće količine (preko 30 komada) ili veleprodajne upite, molimo vas da nas kontaktirate direktno za specijalnu ponudu.
+          </Alert>
+        </Box>
+
       </Box>
 
-      {/* Notification Snackbar */}
       <Snackbar
         open={openNotification}
         autoHideDuration={3000}
         onClose={() => setOpenNotification(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setOpenNotification(false)} severity="success" sx={{ width: '75%' }}>
+        <Alert onClose={() => setOpenNotification(false)} severity="success" variant="filled" sx={{ width: '100%' }}>
           {notificationMessage}
         </Alert>
       </Snackbar>
-       <p style={{color: 'red', display: 'flex', justifyContent: 'center', fontSize: '14px', fontWeight: 'bold'}}>*Za veće količine preporučujemo da nas kontaktirate.</p>
     </Box>
-   
   );
 }
