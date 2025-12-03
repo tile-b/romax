@@ -10,7 +10,7 @@ export default function Contact() {
   return (
     <Box
       sx={{
-        backgroundColor: '#f5f7fa',
+        background: 'linear-gradient(180deg, #f5f7fa 0%, #e8eef5 100%)',
         minHeight: '10vh',
         display: 'flex',
         alignItems: 'center',
@@ -26,15 +26,18 @@ export default function Contact() {
           maxWidth: 900,
           width: '100%',
           borderRadius: 3,
-          boxShadow: 6,
-          backgroundColor: 'white',
+          background: 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%)',
+          boxShadow: '0 12px 48px rgba(15, 35, 82, 0.15)',
           p: { xs: 3, md: 6 },
+          animation: 'scaleIn 0.6s ease',
         }}
       >
         <Typography
           variant="h4"
           sx={{
-            color: '#1a2b4c',
+            background: 'linear-gradient(135deg, #1a2b4c 0%, #1a3a82 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
             fontWeight: 700,
             textAlign: 'center',
             mb: { xs: 3, md: 5 },
@@ -87,7 +90,15 @@ export default function Contact() {
                 <Link
                   href="mailto:office.romax@gmail.com"
                   underline="none"
-                  sx={{ color: '#1a3a82', fontWeight: 600 }}
+                  sx={{
+                    color: '#1a3a82',
+                    fontWeight: 600,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      color: '#2e56c4',
+                      transform: 'translateX(4px)',
+                    },
+                  }}
                 >
                   office.romax@gmail.com
                 </Link>
@@ -113,21 +124,37 @@ export default function Contact() {
                 <Link
                   href="tel:+381644095182"
                   underline="none"
-                  sx={{ color: '#1a3a82', fontWeight: 500 }}
+                  sx={{
+                    color: '#1a3a82',
+                    fontWeight: 500,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      color: '#2e56c4',
+                      transform: 'translateX(4px)',
+                    },
+                  }}
                 >
                   +381 64 4095182
                 </Link>
               </Box>
 
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                Menadžer prodaje: Dušan Boročki
+                Menadžer prodaje: Dušan Borocki
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <PhoneIcon sx={{ color: '#1a3a82', mr: 1 }} />
                 <Link
                   href="tel:+381616823247"
                   underline="none"
-                  sx={{ color: '#1a3a82', fontWeight: 500 }}
+                  sx={{
+                    color: '#1a3a82',
+                    fontWeight: 500,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      color: '#2e56c4',
+                      transform: 'translateX(4px)',
+                    },
+                  }}
                 >
                   +381 61 6823247
                 </Link>

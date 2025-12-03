@@ -11,7 +11,7 @@ import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 
 export default function About() {
 
-    const theme = useTheme();
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const features = [
@@ -19,11 +19,11 @@ export default function About() {
     { icon: <StorefrontIcon />, text: 'Kupovina na veliko i malo' },
     { icon: <DiscountIcon />, text: 'Povoljne cene i popusti' },
   ];
-  
+
   return (
     <Box
       sx={{
-        backgroundColor: '#f5f7fa',
+        background: 'linear-gradient(180deg, #f5f7fa 0%, #e8eef5 100%)',
         py: { xs: 6, md: 10 },
         px: { xs: 2, md: 8 },
       }}
@@ -33,10 +33,13 @@ export default function About() {
         variant="h4"
         sx={{
           textAlign: 'center',
-          color: '#1a2b4c',
+          background: 'linear-gradient(135deg, #1a2b4c 0%, #1a3a82 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
           fontWeight: 700,
           mb: 3,
           fontSize: { xs: '1.9rem', md: '2.6rem' },
+          animation: 'fadeIn 0.8s ease',
         }}
       >
         Romax Plus DOO – Vaš pouzdan proizvođač i distributer streč folije
@@ -53,9 +56,10 @@ export default function About() {
           lineHeight: 1.8,
           mb: 5,
           fontSize: { xs: '1rem', md: '1.15rem' },
+          animation: 'slideUp 0.8s ease 0.2s backwards',
         }}
       >
-         Romax Plus DOO iz Bačke Palanke – firma specijalizovana za proizvodnju,
+        Romax Plus DOO iz Bačke Palanke – firma specijalizovana za proizvodnju,
         konfekcioniranje i prodaju streč folije. Naša folija je izdržljiva, elastična i ekonomična,
         idealna za industrijsku upotrebu, logistiku, magacine i domaćinstva.
         U ponudi imamo streč foliju od 5 kg i 2,5 kg, izrađenu od kvalitetnog materijala koji
@@ -63,61 +67,80 @@ export default function About() {
       </Typography>
 
       {/* Prednosti */}
-{/* Prednosti */}
-<Grid
-      container
-      // Decrease spacing to save horizontal room
-      spacing={isMobile ? 1 : 3} 
-      justifyContent="center"
-      sx={{
-        mb: isMobile ? 4 : 8,
-        // Reduce horizontal padding on mobile
-        px: isMobile ? 1 : 6, 
-      }}
-    >
-      {features.map((item, i) => (
-        // *** CHANGE 1: Use xs={4} to force 3 cards per row (4+4+4 = 12 columns) ***
-        <Grid item xs={4} sm={6} md={4} key={i}>
-          <Card
+      {/* Prednosti */}
+      <Grid
+        container
+        // Decrease spacing to save horizontal room
+        spacing={isMobile ? 1 : 3}
+        justifyContent="center"
+        sx={{
+          mb: isMobile ? 4 : 8,
+          // Reduce horizontal padding on mobile
+          px: isMobile ? 1 : 6,
+        }}
+      >
+        {features.map((item, i) => (
+          // *** CHANGE 1: Use xs={4} to force 3 cards per row (4+4+4 = 12 columns) ***
+          <Grid
+            item
+            xs={4}
+            sm={6}
+            md={4}
+            key={i}
             sx={{
-              textAlign: 'center',
-              // Reduce vertical padding to make cards smaller
-              py: isMobile ? 1 : 4, 
-              // Reduce horizontal padding within the card
-              px: isMobile ? 0.5 : 2, 
-              borderRadius: 3,
-              backgroundColor: 'white',
-              boxShadow: 3,
+              animation: 'scaleIn 0.5s ease backwards',
+              animationDelay: `${i * 0.15 + 0.4}s`,
             }}
           >
-            <Box
+            <Card
               sx={{
-                color: '#1a3a82',
-                mb: isMobile ? 0.5 : 1,
+                textAlign: 'center',
+                // Reduce vertical padding to make cards smaller
+                py: isMobile ? 1 : 4,
+                // Reduce horizontal padding within the card
+                px: isMobile ? 0.5 : 2,
+                borderRadius: 3,
+                background: 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%)',
+                boxShadow: '0 4px 16px rgba(15, 35, 82, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 12px 32px rgba(15, 35, 82, 0.2)',
+                },
               }}
             >
-              {React.cloneElement(item.icon, {
-                // *** CHANGE 2: Aggressively reduce icon size on mobile ***
-                sx: { fontSize: isMobile ? 25 : 50 }, 
-              })}
-            </Box>
+              <Box
+                sx={{
+                  color: '#1a3a82',
+                  mb: isMobile ? 0.5 : 1,
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.2) rotate(5deg)',
+                  },
+                }}
+              >
+                {React.cloneElement(item.icon, {
+                  // *** CHANGE 2: Aggressively reduce icon size on mobile ***
+                  sx: { fontSize: isMobile ? 25 : 50 },
+                })}
+              </Box>
 
-            <Typography
-              variant={isMobile ? 'body2' : 'h6'}
-              sx={{
-                fontWeight: 600,
-                // *** CHANGE 3: Set a very small fixed font size for mobile ***
-                fontSize: isMobile ? '0.65rem' : '1.1rem', 
-                // Ensure text doesn't wrap to a second line if possible
-                lineHeight: 1.1,
-              }}
-            >
-              {item.text}
-            </Typography>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+              <Typography
+                variant={isMobile ? 'body2' : 'h6'}
+                sx={{
+                  fontWeight: 600,
+                  // *** CHANGE 3: Set a very small fixed font size for mobile ***
+                  fontSize: isMobile ? '0.65rem' : '1.1rem',
+                  // Ensure text doesn't wrap to a second line if possible
+                  lineHeight: 1.1,
+                }}
+              >
+                {item.text}
+              </Typography>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
 
 
       {/* O nama */}
@@ -179,14 +202,27 @@ export default function About() {
             desc: 'Kompaktna i praktična varijanta namenjena manjim korisnicima i domaćinstvima. Omogućava brzo i sigurno pakovanje raznovrsnih proizvoda.',
           },
         ].map((item, i) => (
-          <Grid item xs={12} md={6} key={i}>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            key={i}
+            sx={{
+              animation: 'slideInLeft 0.6s ease backwards',
+              animationDelay: `${i * 0.2 + 0.6}s`,
+            }}
+          >
             <Card
               sx={{
-                backgroundColor: 'white',
+                background: 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%)',
                 borderRadius: 3,
-                boxShadow: 4,
+                boxShadow: '0 8px 24px rgba(15, 35, 82, 0.12)',
                 height: '100%',
-                '&:hover': { transform: 'scale(1.02)', transition: '0.3s' },
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.03) translateY(-4px)',
+                  boxShadow: '0 16px 40px rgba(15, 35, 82, 0.2)',
+                },
               }}
             >
               <CardContent>
@@ -226,18 +262,44 @@ export default function About() {
           { icon: <PriceCheckIcon />, text: 'Najbolji odnos cene i kvaliteta na tržištu' },
           { icon: <ThumbUpIcon />, text: 'Popusti i pogodnosti za firme i distributere' },
         ].map((item, i) => (
-          <Grid item xs={12} sm={6} md={4} key={i}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            key={i}
+            sx={{
+              animation: 'slideUp 0.5s ease backwards',
+              animationDelay: `${i * 0.1 + 0.8}s`,
+            }}
+          >
             <Card
               sx={{
                 display: 'flex',
                 alignItems: 'center',
                 p: 2,
                 borderRadius: 3,
-                backgroundColor: 'white',
-                boxShadow: 3,
+                background: 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%)',
+                boxShadow: '0 4px 16px rgba(15, 35, 82, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateX(8px)',
+                  boxShadow: '0 8px 24px rgba(15, 35, 82, 0.15)',
+                },
               }}
             >
-              <Box sx={{ color: '#1a3a82', mr: 2 }}>{item.icon}</Box>
+              <Box
+                sx={{
+                  color: '#1a3a82',
+                  mr: 2,
+                  transition: 'transform 0.3s ease',
+                  '&:hover': {
+                    transform: 'rotate(360deg) scale(1.2)',
+                  },
+                }}
+              >
+                {item.icon}
+              </Box>
               <Typography variant="body1" sx={{ fontWeight: 600, color: '#333' }}>
                 {item.text}
               </Typography>

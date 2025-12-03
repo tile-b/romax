@@ -1,46 +1,55 @@
 .headerTopBar {
-    background-color:  #122d5d;
+    background: linear-gradient(135deg, #0a1d42 0%, #122d5d 50%, #1a3a82 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
     position: sticky;
     z-index: 9;
     top: 0;
     padding: 5px 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
 }
 
 
-.row{
+.row {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 1px 50px;
 }
 
-.spanTop{
+.spanTop {
     padding-left: 25px;
     padding-right: 25px;
     color: rgb(172, 172, 172);
-
+    transition: all 0.3s ease;
 }
-.spanTop:hover{
+
+.spanTop:hover {
     color: white;
     cursor: pointer;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
 }
 
-.ico{
+.ico {
     padding-right: 10px;
     width: 20px;
 }
+
 .hovWhite {
-    color:  #062a45;
+    color: #062a45;
     font-size: 20px;
 }
 
-.hovWhite:hover{
+.hovWhite:hover {
     color: #ffff;
     cursor: pointer;
 }
+
 @media only screen and (min-width: 1150px) {
 
-    .hovWhite{
+    .hovWhite {
         height: 9vw;
         display: flex;
         align-items: flex-end;
@@ -48,52 +57,61 @@
     }
 
 }
-.ajp{
-  
-        text-decoration: none;
-        color: inherit;
-        background: none;
-        border: none;
-        padding: 0;
-        margin: 0;
-        font: inherit;
-        cursor: pointer;
+
+.ajp {
+
+    text-decoration: none;
+    color: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
 
 }
 
 @media only screen and (max-width: 980px) {
 
-    .nestani{
-display: none;
+    .nestani {
+        display: none;
 
     }
-    .spanTop{
+
+    .spanTop {
         padding-left: 0;
         padding-right: 0;
     }
-    .ee{
+
+    .ee {
         padding-left: 0;
     }
-  }
+}
 
-  .boja{
+.boja {
     color: rgb(172, 172, 172);
-  }
+}
 
 .customLink {
-  text-decoration: none;   /* remove underline */
-  color: inherit;          /* keep the child’s color */
-  display: inline-flex;    /* preserve layout for buttons/icons */
+    text-decoration: none;
+    /* remove underline */
+    color: inherit;
+    /* keep the child’s color */
+    display: inline-flex;
+    /* preserve layout for buttons/icons */
 }
 
 .customLink:visited {
-  color: inherit;          /* no purple visited color */
+    color: inherit;
+    /* no purple visited color */
 }
 
 .customLink:hover {
-  color: inherit;          /* don’t change color on hover */
+    color: inherit;
+    /* don’t change color on hover */
 }
 
 .customLink:active {
-  color: inherit;          /* same when clicked */
+    color: inherit;
+    /* same when clicked */
 }

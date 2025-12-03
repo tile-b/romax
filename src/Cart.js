@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, IconButton, Button, Paper, Divider, Grid, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Stack, Snackbar, Alert } from '@mui/material';
 // ISPRAVLJENO: Uklonjen duplirani '@mui'
-import AddIcon from '@mui/icons-material/Add'; 
+import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -14,20 +14,20 @@ import emailjs from '@emailjs/browser';
 // NOTE: Make sure productsData is correctly imported and accessible for price range lookups
 // NOTE: The getPrice function logic is kept as is from your original component
 const getPrice = (product, quantity) => {
-    // First try product.priceRanges on the cart item
-    const ranges = product && Array.isArray(product.priceRanges) ? product.priceRanges : null;
-    // If not present, lookup canonical product data by id
-    const canonical = productsData.find(p => p.id === product.id);
-    const effectiveRanges = ranges || (canonical ? canonical.priceRanges : null);
+  // First try product.priceRanges on the cart item
+  const ranges = product && Array.isArray(product.priceRanges) ? product.priceRanges : null;
+  // If not present, lookup canonical product data by id
+  const canonical = productsData.find(p => p.id === product.id);
+  const effectiveRanges = ranges || (canonical ? canonical.priceRanges : null);
 
-    if (effectiveRanges && Array.isArray(effectiveRanges)) {
-      const range = effectiveRanges.find(r => quantity >= r.min && quantity <= r.max);
-      if (range) return range.price;
-      return effectiveRanges[0] ? effectiveRanges[0].price : (product && typeof product.price === 'number' ? product.price : 0);
-    }
+  if (effectiveRanges && Array.isArray(effectiveRanges)) {
+    const range = effectiveRanges.find(r => quantity >= r.min && quantity <= r.max);
+    if (range) return range.price;
+    return effectiveRanges[0] ? effectiveRanges[0].price : (product && typeof product.price === 'number' ? product.price : 0);
+  }
 
-    // Last fallback: use stored item price
-    return product && typeof product.price === 'number' ? product.price : 0;
+  // Last fallback: use stored item price
+  return product && typeof product.price === 'number' ? product.price : 0;
 };
 
 // Format price with dot as thousands separator, e.g. 1000 -> 1.000
@@ -65,26 +65,42 @@ const CartItem = ({ item, handleIncrement, handleDecrement, removeFromCart, onQu
   };
 
   return (
-    <Paper elevation={1} sx={{ p: 2, display: 'flex', alignItems: 'center', mb: 2, bgcolor: 'white', borderRadius: 2 }}>
-      <img 
-        src={finalImg} 
-        alt={item.name} 
-        style={{ 
-          width: 80, 
-          height: 80, 
-          objectFit: 'cover', 
-          borderRadius: 6, 
-          marginRight: 16 
-        }} 
+    <Paper
+      elevation={1}
+      sx={{
+        p: 2,
+        display: 'flex',
+        alignItems: 'center',
+        mb: 2,
+        background: 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%)',
+        borderRadius: 2,
+        transition: 'all 0.3s ease',
+        animation: 'slideInLeft 0.4s ease',
+        '&:hover': {
+          transform: 'translateX(4px)',
+          boxShadow: '0 8px 24px rgba(15, 35, 82, 0.12)',
+        },
+      }}
+    >
+      <img
+        src={finalImg}
+        alt={item.name}
+        style={{
+          width: 80,
+          height: 80,
+          objectFit: 'cover',
+          borderRadius: 6,
+          marginRight: 16
+        }}
       />
-            
+
       <Grid container spacing={1} alignItems="center">
-                
+
         {/* Product Name & Current Price */}
         <Grid item xs={12} sm={4}>
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#0f2352' }}>{item.name}</Typography>
           <Typography variant="body2" color="text.secondary">
-            Cena po komadu: <span style={{ fontWeight: 'bold' }}>{formatPrice(item.price)}</span>
+            Cena po komadu: <span style={{ fontWeight: 'bold' }}>{formatPrice(item.price)}</span> <span style={{ fontSize: '0.8em' }}>+PDV</span>
           </Typography>
         </Grid>
 
@@ -110,9 +126,12 @@ const CartItem = ({ item, handleIncrement, handleDecrement, removeFromCart, onQu
 
         {/* Total Price & Delete Button */}
         <Grid item xs={6} sm={4} sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'black', mr: 2, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-            {formatPrice(item.price * item.quantity)}
-          </Typography>
+          <Box sx={{ textAlign: 'right', mr: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'black', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+              {formatPrice(item.price * item.quantity)}<Typography variant="caption" color="text.secondary">+PDV</Typography>
+            </Typography>
+
+          </Box>
           <IconButton color="error" onClick={() => removeFromCart(item.id)} size="medium">
             <DeleteIcon />
           </IconButton>
@@ -128,7 +147,9 @@ export default function Cart() {
 
   // Constants
   const transportFee = 400;
-  const grandTotal = cartTotal + transportFee;
+  const pdvRate = 0.20;
+  const pdvAmount = cartTotal * pdvRate;
+  const grandTotal = cartTotal + pdvAmount + transportFee;
 
   // Handlers (reusing logic but updating getPrice reference)
   const handleIncrement = (product) => {
@@ -171,7 +192,8 @@ export default function Cart() {
   const handleFormChange = (key) => (e) => setFormData(prev => ({ ...prev, [key]: e.target.value }));
 
   const buildOrderDetails = () => {
-    return cartItems.map(i => `${i.name} — ${i.quantity} × ${formatPrice(i.price)} = ${formatPrice(i.price * i.quantity)}`).join('\n');
+    const itemsList = cartItems.map(i => `${i.name} — ${i.quantity} × ${formatPrice(i.price)} = ${formatPrice(i.price * i.quantity)}`).join('\n');
+    return `${itemsList}\n\n--------------------------------\nOsnovica: ${formatPrice(cartTotal)}\nPDV (20%): ${formatPrice(pdvAmount)}\nPrevoz: ${formatPrice(transportFee)}\n--------------------------------\nZA UPLATU: ${formatPrice(grandTotal)}`;
   };
 
   const sendOrder = async () => {
@@ -224,17 +246,27 @@ export default function Cart() {
 
   // --- RENDERING ---
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', py: 6, px: { xs: 2, md: 4 }, bgcolor: '#f4f7f9' }}>
-      <Typography 
-        variant="h4" 
-        sx={{ 
-          textAlign: 'center', 
-          fontWeight: 'extraBold', 
-          mb: 5, 
-          color: '#0f2352', 
-          borderBottom: '3px solid #0f2352', 
-          display: 'inline-block', 
-          mx: 'auto' 
+    <Box sx={{
+      maxWidth: 1200,
+      mx: 'auto',
+      py: 6,
+      px: { xs: 2, md: 4 },
+      background: 'linear-gradient(180deg, #f4f7f9 0%, #e8eef5 100%)',
+    }}>
+      <Typography
+        variant="h4"
+        sx={{
+          textAlign: 'center',
+          fontWeight: 'extraBold',
+          mb: 5,
+          background: 'linear-gradient(135deg, #0f2352 0%, #1a3a82 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          borderBottom: '3px solid transparent',
+          borderImage: 'linear-gradient(90deg, transparent, #0f2352, #1a3a82, #0f2352, transparent) 1',
+          display: 'inline-block',
+          mx: 'auto',
+          animation: 'fadeIn 0.6s ease',
         }}
       >
         <ShoppingCartIcon sx={{ mr: 1, verticalAlign: 'middle' }} /> Vaša Korpa
@@ -255,13 +287,13 @@ export default function Cart() {
           <Grid item xs={12} md={8}>
             <Box>
               {cartItems.map((item) => (
-                <CartItem 
-                    key={item.id}
-                    item={item}
-                    handleIncrement={handleIncrement}
-                    handleDecrement={handleDecrement}
-                    removeFromCart={removeFromCart}
-                    onQuantityChange={handleQuantityChange}
+                <CartItem
+                  key={item.id}
+                  item={item}
+                  handleIncrement={handleIncrement}
+                  handleDecrement={handleDecrement}
+                  removeFromCart={removeFromCart}
+                  onQuantityChange={handleQuantityChange}
                 />
               ))}
             </Box>
@@ -269,7 +301,18 @@ export default function Cart() {
 
           {/* RIGHT SIDE: Cart Summary (4/12 columns on desktop) */}
           <Grid item xs={12} md={4}>
-            <Paper elevation={4} sx={{ p: 3, borderRadius: 3, position: { md: 'sticky' }, top: 20, bgcolor: '#ffffff' }}>
+            <Paper
+              elevation={4}
+              sx={{
+                p: 3,
+                borderRadius: 3,
+                position: { md: 'sticky' },
+                top: 20,
+                background: 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%)',
+                boxShadow: '0 12px 40px rgba(15, 35, 82, 0.15)',
+                animation: 'slideUp 0.6s ease 0.2s backwards',
+              }}
+            >
               <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: '#0f2352' }}>
                 Sažetak Porudžbine
               </Typography>
@@ -277,64 +320,86 @@ export default function Cart() {
 
               {/* Subtotal */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="body1"><b>Proizvodi:</b></Typography>
-             <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{formatPrice(cartTotal)}</Typography>
+                <Typography variant="body1">Osnovica (bez PDV):</Typography>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{formatPrice(cartTotal)}</Typography>
+              </Box>
+
+              {/* PDV */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography variant="body1">PDV (20%):</Typography>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{formatPrice(pdvAmount)}</Typography>
               </Box>
 
               {/* Transport Fee */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                 <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center' }}>
-                    <LocalShippingIcon sx={{ fontSize: 18, mr: 0.5, color: 'success.main' }} /><b> Prevoz:</b>
-             </Typography>
-             <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{formatPrice(transportFee)}</Typography>
+                  <LocalShippingIcon sx={{ fontSize: 18, mr: 0.5, color: 'success.main' }} /> Prevoz:
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{formatPrice(transportFee)}</Typography>
               </Box>
-              
+
               <Divider sx={{ mb: 2 }} />
 
               {/* Grand Total */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Ukupno: </Typography>
-             <Typography variant="h6" color="error" sx={{ fontWeight: 'bold' }}>{formatPrice(grandTotal)}</Typography>
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Za uplatu: </Typography>
+                <Typography variant="h6" color="error" sx={{ fontWeight: 'bold' }}>{formatPrice(grandTotal)}</Typography>
               </Box>
 
-              <Button 
-                variant="contained" 
-                fullWidth 
+              <Button
+                variant="contained"
+                fullWidth
                 size="large"
                 onClick={openOrder}
                 disabled={cartItems.length === 0}
-                sx={{ 
-                  bgcolor: '#0f2352', 
-                  '&:hover': { bgcolor: '#173272' },
+                sx={{
+                  background: 'linear-gradient(135deg, #0f2352 0%, #1a3a82 100%)',
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #173272 0%, #2e56c4 100%)',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 8px 24px rgba(15, 35, 82, 0.4)',
+                  },
                   py: 1.5,
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 14px rgba(15, 35, 82, 0.3)',
                 }}
               >
                 Nastavi na porudžbinu
               </Button>
 
               {/* Order Dialog - MODIFIED FOR MOBILE */}
-              <Dialog open={orderOpen} onClose={closeOrder} fullWidth maxWidth="xs"> {/* Changed maxWidth to 'xs' */}
+              <Dialog
+                open={orderOpen}
+                onClose={closeOrder}
+                fullWidth
+                maxWidth="xs"
+                sx={{
+                  '& .MuiDialog-paper': {
+                    animation: 'scaleIn 0.3s ease',
+                  },
+                }}
+              > {/* Changed maxWidth to 'xs' */}
                 <DialogTitle sx={{ typography: 'h6' }}>Podaci za porudžbinu</DialogTitle> {/* Reduced title size */}
                 <DialogContent>
                   <Stack spacing={1} sx={{ mt: 1 }}> {/* Reduced spacing */}
-                    
+
                     {/* Ime & Prezime (ostaje upareno) */}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}> 
-                      <TextField label="Ime" value={formData.name} onChange={handleFormChange('name')} fullWidth size="small" /> 
-                      <TextField label="Prezime" value={formData.surname} onChange={handleFormChange('surname')} fullWidth size="small" /> 
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                      <TextField label="Ime" value={formData.name} onChange={handleFormChange('name')} fullWidth size="small" />
+                      <TextField label="Prezime" value={formData.surname} onChange={handleFormChange('surname')} fullWidth size="small" />
                     </Stack>
-                    
+
                     {/* NOVI RED: Adresa & Grad (upareni) */}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}> 
-                      <TextField label="Adresa" value={formData.address} onChange={handleFormChange('address')} fullWidth size="small" /> 
-                      <TextField label="Grad" value={formData.city} onChange={handleFormChange('city')} fullWidth size="small" /> 
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                      <TextField label="Adresa" value={formData.address} onChange={handleFormChange('address')} fullWidth size="small" />
+                      <TextField label="Grad" value={formData.city} onChange={handleFormChange('city')} fullWidth size="small" />
                     </Stack>
-                    
+
                     {/* NOVI RED: Telefon & E-mail (upareni) */}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}> 
-                      <TextField label="Telefon" value={formData.phone} onChange={handleFormChange('phone')} fullWidth size="small" /> 
-                      <TextField label="E-mail" value={formData.email} onChange={handleFormChange('email')} fullWidth size="small" /> 
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                      <TextField label="Telefon" value={formData.phone} onChange={handleFormChange('phone')} fullWidth size="small" />
+                      <TextField label="E-mail" value={formData.email} onChange={handleFormChange('email')} fullWidth size="small" />
                     </Stack>
 
                     <TextField label="Napomena (opciono)" value={formData.note} onChange={handleFormChange('note')} fullWidth multiline rows={2} size="small" /> {/* Reduced rows and added size="small" */}
@@ -351,15 +416,19 @@ export default function Cart() {
                       ))}
                       <Divider sx={{ my: 1 }} />
                       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography sx={{ fontSize: 12 }}>Ukupno (bez prevoza)</Typography> {/* Reduced font size */}
+                        <Typography sx={{ fontSize: 12 }}>Osnovica</Typography> {/* Reduced font size */}
                         <Typography sx={{ fontSize: 12, fontWeight: 'bold' }}>{formatPrice(cartTotal)}</Typography> {/* Reduced font size */}
+                      </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography sx={{ fontSize: 12 }}>PDV (20%)</Typography> {/* Reduced font size */}
+                        <Typography sx={{ fontSize: 12, fontWeight: 'bold' }}>{formatPrice(pdvAmount)}</Typography> {/* Reduced font size */}
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Typography sx={{ fontSize: 12 }}>Prevoz</Typography> {/* Reduced font size */}
                         <Typography sx={{ fontSize: 12, fontWeight: 'bold' }}>{formatPrice(transportFee)}</Typography> {/* Reduced font size */}
                       </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 , border: '1px solid #ccc', p: 1}}>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Ukupno sa prevozom</Typography> {/* Reduced typography size */}
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, border: '1px solid #ccc', p: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Za uplatu</Typography> {/* Reduced typography size */}
                         <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{formatPrice(grandTotal)}</Typography> {/* Reduced typography size */}
                       </Box>
                     </Box>
