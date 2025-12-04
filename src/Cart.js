@@ -6,6 +6,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext';
 import productsData from './productsData';
 import emailjs from '@emailjs/browser';
@@ -18,6 +19,13 @@ const getPrice = (product, quantity) => {
   const ranges = product && Array.isArray(product.priceRanges) ? product.priceRanges : null;
   // If not present, lookup canonical product data by id
   const canonical = productsData.find(p => p.id === product.id);
+
+  // Handle Box Type
+  if (product.type === 'box' || (canonical && canonical.type === 'box')) {
+    const p = canonical || product;
+    return p.pricePerPiece * p.piecesPerBox;
+  }
+
   const effectiveRanges = ranges || (canonical ? canonical.priceRanges : null);
 
   if (effectiveRanges && Array.isArray(effectiveRanges)) {
@@ -38,8 +46,9 @@ const formatPrice = (value) => {
 
 // Item component for visual clarity and reusability
 const CartItem = ({ item, handleIncrement, handleDecrement, removeFromCart, onQuantityChange }) => {
-  const canonicalImg = productsData.find(p => p.id === item.id)?.img;
-  const finalImg = item.img || canonicalImg;
+  const canonical = productsData.find(p => p.id === item.id);
+  const finalImg = item.img || (canonical ? canonical.img : '');
+  const isBox = item.type === 'box' || (canonical && canonical.type === 'box');
 
   const [inputQty, setInputQty] = useState(item.quantity);
 
@@ -99,9 +108,21 @@ const CartItem = ({ item, handleIncrement, handleDecrement, removeFromCart, onQu
         {/* Product Name & Current Price */}
         <Grid item xs={12} sm={4}>
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#0f2352' }}>{item.name}</Typography>
-          <Typography variant="body2" color="text.secondary">
-            Cena po komadu: <span style={{ fontWeight: 'bold' }}>{formatPrice(item.price)}</span> <span style={{ fontSize: '0.8em' }}>+PDV</span>
-          </Typography>
+
+          {isBox ? (
+            <Box>
+              <Typography variant="body2" color="text.secondary">
+                Pakovanje: <b>{canonical?.piecesPerBox} kom</b>
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Cena po komadu: <b>{canonical?.pricePerPiece} RSD</b>
+              </Typography>
+            </Box>
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              Cena po komadu: <span style={{ fontWeight: 'bold' }}>{formatPrice(item.price)}</span> <span style={{ fontSize: '0.8em' }}>+PDV</span>
+            </Typography>
+          )}
         </Grid>
 
         {/* Quantity Controls with editable input */}
@@ -122,6 +143,7 @@ const CartItem = ({ item, handleIncrement, handleDecrement, removeFromCart, onQu
               <AddIcon fontSize="small" />
             </IconButton>
           </Box>
+          {isBox && <Typography variant="caption" sx={{ ml: 1, alignSelf: 'center' }}>kut.</Typography>}
         </Grid>
 
         {/* Total Price & Delete Button */}
@@ -130,7 +152,11 @@ const CartItem = ({ item, handleIncrement, handleDecrement, removeFromCart, onQu
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'black', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
               {formatPrice(item.price * item.quantity)}<Typography variant="caption" color="text.secondary">+PDV</Typography>
             </Typography>
-
+            {isBox && (
+              <Typography variant="caption" display="block" color="text.secondary">
+                ({item.quantity * (canonical?.piecesPerBox || 1)} kom)
+              </Typography>
+            )}
           </Box>
           <IconButton color="error" onClick={() => removeFromCart(item.id)} size="medium">
             <DeleteIcon />
@@ -144,6 +170,7 @@ const CartItem = ({ item, handleIncrement, handleDecrement, removeFromCart, onQu
 
 export default function Cart() {
   const { cartItems, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
+  const navigate = useNavigate();
 
   // Constants
   const transportFee = 400;
@@ -277,7 +304,11 @@ export default function Cart() {
           <Typography variant="h5" color="text.secondary">
             Vaša korpa je prazna.
           </Typography>
-          <Button variant="contained" sx={{ mt: 3, bgcolor: '#0f2352', '&:hover': { bgcolor: '#173272' } }}>
+          <Button
+            variant="contained"
+            sx={{ mt: 3, bgcolor: '#0f2352', '&:hover': { bgcolor: '#173272' } }}
+            onClick={() => navigate('/')}
+          >
             Nastavi kupovinu
           </Button>
         </Paper>

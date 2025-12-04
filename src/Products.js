@@ -4,11 +4,13 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext';
 import productsData from './productsData';
 
 export default function Products() {
   const { addToCart, cartItems } = useCart();
+  const navigate = useNavigate();
 
   // Initialize quantities for all products
   const initialQuantities = {};
@@ -30,15 +32,19 @@ export default function Products() {
     : productsData.filter(p => p.category === selectedCategory);
 
   const getPrice = (product, quantity) => {
-    // Find the range that covers the current quantity
+    if (product.type === 'box') {
+      return product.pricePerPiece * product.piecesPerBox;
+    }
+    if (product.type === 'informative') {
+      return 0; // Not purchasable
+    }
+    // Standard logic
     let range = product.priceRanges.find(r => quantity >= r.min && quantity <= r.max);
     if (!range) {
-      // If not found, check if it's above the highest max
       const maxRange = product.priceRanges.reduce((prev, current) => (prev.max > current.max) ? prev : current);
       if (quantity > maxRange.max) {
         range = maxRange;
       } else {
-        // Fallback to first
         range = product.priceRanges[0];
       }
     }
@@ -56,12 +62,12 @@ export default function Products() {
   const orderProduct = (product) => {
     const qtyToAdd = Number(quantities[product.id]);
 
-    // Check if item is already in cart to calculate correct bulk price
+    // Check if item is already in cart
     const existingItem = cartItems.find(item => item.id === product.id);
     const currentCartQty = existingItem ? existingItem.quantity : 0;
     const newTotalQty = currentCartQty + qtyToAdd;
 
-    // Calculate price based on the NEW total quantity
+    // Calculate price
     const price = getPrice(product, newTotalQty);
 
     addToCart({ ...product, quantity: qtyToAdd, price });
@@ -143,13 +149,22 @@ export default function Products() {
         <Grid container spacing={3} justifyContent="center">
           {filteredProducts.map((p, index) => {
             const qty = quantities[p.id] || 1;
-
-            // Calculate price for display (just for the current selection)
-            const currentPrice = getPrice(p, qty);
-            const totalPrice = qty * currentPrice;
-
             const inCartItem = cartItems.find(item => item.id === p.id);
             const inCartQty = inCartItem ? inCartItem.quantity : 0;
+
+            // Determine if purchasable
+            const isInformative = p.type === 'informative';
+            const isBox = p.type === 'box';
+
+            // Calculate display price
+            let displayPrice = 0;
+            if (isBox) {
+              displayPrice = p.pricePerPiece * p.piecesPerBox;
+            } else if (!isInformative) {
+              displayPrice = getPrice(p, qty);
+            }
+
+            const totalPrice = qty * displayPrice;
 
             return (
               <Grid
@@ -174,19 +189,32 @@ export default function Products() {
                     background: 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%)',
                     boxShadow: '0 10px 40px -10px rgba(15, 35, 82, 0.12)',
                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    border: inCartQty > 0
+                      ? '3px solid #4caf50'
+                      : '2px solid transparent',
+                    backgroundImage: inCartQty > 0
+                      ? 'none'
+                      : 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%), linear-gradient(135deg, #0f2352 0%, #1a3a82 50%, #2e56c4 100%)',
+                    backgroundOrigin: 'border-box',
+                    backgroundClip: inCartQty > 0 ? 'border-box' : 'padding-box, border-box',
                     '&:hover': {
-                      transform: 'translateY(-8px) scale(1.02)',
-                      boxShadow: '0 20px 60px -10px rgba(15, 35, 82, 0.25), 0 0 0 1px rgba(26, 58, 130, 0.1)',
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 20px 60px -10px rgba(15, 35, 82, 0.25)',
+                      border: inCartQty > 0
+                        ? '3px solid #66bb6a'
+                        : '2px solid transparent',
+                      backgroundImage: inCartQty > 0
+                        ? 'none'
+                        : 'linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%), linear-gradient(135deg, #1a3a82 0%, #2e56c4 50%, #4a7dd9 100%)',
                     },
                     height: '100%',
                     position: 'relative',
-                    border: inCartQty > 0 ? '2px solid #4caf50' : '1px solid rgba(0,0,0,0.05)'
                   }}
                 >
                   {inCartQty > 0 && (
                     <Chip
                       icon={<CheckCircleIcon style={{ color: 'white' }} />}
-                      label={`U korpi: ${inCartQty}`}
+                      label={`U korpi: ${inCartQty} ${isBox ? 'kut.' : 'kom.'}`}
                       size="small"
                       sx={{
                         position: 'absolute',
@@ -226,93 +254,140 @@ export default function Products() {
                       {p.name}
                     </Typography>
 
-                    {/* Price Tiers Visualizer */}
-                    <Box sx={{ mb: 2, mt: 'auto' }}>
-                      <Typography variant="caption" color="text.secondary" fontWeight="bold" textTransform="uppercase" letterSpacing={0.5} sx={{ fontSize: '0.65rem' }}>
-                        Cenovnik
-                      </Typography>
-                      <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, flexWrap: 'wrap' }}>
-                        {p.priceRanges.map((range, idx) => {
-                          const isActive = qty >= range.min && qty <= range.max;
-                          return (
-                            <Box
-                              key={idx}
-                              onClick={() => handleChange(p.id, range.min)}
-                              sx={{
-                                border: isActive ? '1.5px solid #0f2352' : '1px solid #e0e0e0',
-                                background: isActive ? 'linear-gradient(135deg, #eef2ff 0%, #dce4ff 100%)' : 'transparent',
-                                borderRadius: 1.5,
-                                px: 1, py: 0.5,
-                                textAlign: 'center',
-                                flex: 1,
-                                minWidth: 50,
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                transform: isActive ? 'scale(1.02)' : 'scale(1)',
-                                '&:hover': {
-                                  borderColor: '#0f2352',
-                                  background: isActive ? 'linear-gradient(135deg, #eef2ff 0%, #dce4ff 100%)' : '#f5f5f5',
-                                }
-                              }}
-                            >
-                              <Typography variant="caption" display="block" color="text.secondary" sx={{ fontSize: '0.65rem', lineHeight: 1 }}>
-                                {range.min}-{range.max}
-                              </Typography>
-                              <Typography variant="body2" fontWeight="bold" color={isActive ? '#0f2352' : 'text.primary'} sx={{ fontSize: '0.85rem' }}>
-                                {range.price} RSD
-                              </Typography>
-                            </Box>
-                          )
-                        })}
-                      </Box>
-                    </Box>
+                    {/* Informative Type Display */}
+                    {isInformative && (
+                      <Box sx={{ mt: 'auto' }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                          {p.description}
+                        </Typography>
+                        <Typography variant="h6" color="#0f2352" fontWeight="bold">
+                          {p.pricePerKg} RSD / kg<Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>(+PDV)</Typography>
+                        </Typography>
 
-                    <Divider sx={{ my: 1.5 }} />
-
-                    {/* Controls */}
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid #ddd', borderRadius: 2, bgcolor: '#fff', height: 32 }}>
-                          <IconButton onClick={() => handleDecrement(p.id)} color="primary" size="small">
-                            <RemoveIcon fontSize="small" sx={{ fontSize: 16 }} />
-                          </IconButton>
-                          <Typography sx={{ mx: 1, fontWeight: 'bold', minWidth: 16, textAlign: 'center', fontSize: '0.9rem' }}>{qty}</Typography>
-                          <IconButton onClick={() => handleIncrement(p.id)} color="primary" size="small">
-                            <AddIcon fontSize="small" sx={{ fontSize: 16 }} />
-                          </IconButton>
+                        <Box sx={{ mt: 2, p: 1, bgcolor: '#e3f2fd', borderRadius: 1, textAlign: 'center' }}>
+                          <Typography variant="body2" fontWeight="bold" color="#1565c0">
+                            {p.palletDetails}
+                          </Typography>
                         </Box>
-                        <Box sx={{ textAlign: 'right' }}>
+                        <Button
+                          variant="outlined"
+                          fullWidth
+                          sx={{ mt: 2 }}
+                          onClick={() => navigate('/contact')}
+                        >
+                          Pošalji upit
+                        </Button>
+                      </Box>
+                    )}
 
+                    {/* Box Type Display */}
+                    {isBox && (
+                      <Box sx={{ mb: 2, mt: 'auto' }}>
+                        <Box sx={{ p: 1.5, bgcolor: '#f5f5f5', borderRadius: 2, mb: 2 }}>
+                          <Typography variant="body2" color="text.secondary" gutterBottom>
+                            Pakovanje: <b>{p.piecesPerBox} komada</b>
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Cena po komadu: <b>{p.pricePerPiece} RSD</b>
+                          </Typography>
+                          <Divider sx={{ my: 1 }} />
                           <Typography variant="body1" fontWeight="bold" color="#0f2352">
-                            {totalPrice.toLocaleString()} RSD<Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>(+PDV)</Typography>
+                            {displayPrice.toLocaleString()} RSD <span style={{ fontSize: '0.7em', fontWeight: 'normal' }}>/ kutija</span>
                           </Typography>
                         </Box>
                       </Box>
+                    )}
 
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        size="medium"
-                        startIcon={<ShoppingCartIcon sx={{ fontSize: 20 }} />}
-                        onClick={() => orderProduct(p)}
-                        sx={{
-                          background: 'linear-gradient(135deg, #0f2352 0%, #1a3a82 100%)',
-                          borderRadius: 2,
-                          py: 1,
-                          textTransform: 'none',
-                          fontSize: '0.95rem',
-                          fontWeight: 'bold',
-                          boxShadow: '0 4px 14px rgba(15, 35, 82, 0.3)',
-                          '&:hover': {
-                            background: 'linear-gradient(135deg, #1a3b80 0%, #2e56c4 100%)',
-                            transform: 'translateY(-2px)',
-                            boxShadow: '0 8px 24px rgba(15, 35, 82, 0.4)',
-                          },
-                        }}
-                      >
-                        Dodaj
-                      </Button>
-                    </Box>
+                    {/* Standard Type Display (Price Tiers) */}
+                    {!isInformative && !isBox && (
+                      <Box sx={{ mb: 2, mt: 'auto' }}>
+                        <Typography variant="caption" color="text.secondary" fontWeight="bold" textTransform="uppercase" letterSpacing={0.5} sx={{ fontSize: '0.65rem' }}>
+                          Cenovnik
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, flexWrap: 'wrap' }}>
+                          {p.priceRanges.map((range, idx) => {
+                            const isActive = qty >= range.min && qty <= range.max;
+                            return (
+                              <Box
+                                key={idx}
+                                onClick={() => handleChange(p.id, range.min)}
+                                sx={{
+                                  border: isActive ? '1.5px solid #0f2352' : '1px solid #e0e0e0',
+                                  background: isActive ? 'linear-gradient(135deg, #eef2ff 0%, #dce4ff 100%)' : 'transparent',
+                                  borderRadius: 1.5,
+                                  px: 1, py: 0.5,
+                                  textAlign: 'center',
+                                  flex: 1,
+                                  minWidth: 50,
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s',
+                                  transform: isActive ? 'scale(1.02)' : 'scale(1)',
+                                  '&:hover': {
+                                    borderColor: '#0f2352',
+                                    background: isActive ? 'linear-gradient(135deg, #eef2ff 0%, #dce4ff 100%)' : '#f5f5f5',
+                                  }
+                                }}
+                              >
+                                <Typography variant="caption" display="block" color="text.secondary" sx={{ fontSize: '0.65rem', lineHeight: 1 }}>
+                                  {range.min}-{range.max}
+                                </Typography>
+                                <Typography variant="body2" fontWeight="bold" color={isActive ? '#0f2352' : 'text.primary'} sx={{ fontSize: '0.85rem' }}>
+                                  {range.price} RSD
+                                </Typography>
+                              </Box>
+                            )
+                          })}
+                        </Box>
+                      </Box>
+                    )}
+
+                    {!isInformative && <Divider sx={{ my: 1.5 }} />}
+
+                    {/* Controls (Only for purchasable) */}
+                    {!isInformative && (
+                      <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid #ddd', borderRadius: 2, bgcolor: '#fff', height: 32 }}>
+                            <IconButton onClick={() => handleDecrement(p.id)} color="primary" size="small">
+                              <RemoveIcon fontSize="small" sx={{ fontSize: 16 }} />
+                            </IconButton>
+                            <Typography sx={{ mx: 1, fontWeight: 'bold', minWidth: 16, textAlign: 'center', fontSize: '0.9rem' }}>{qty}</Typography>
+                            <IconButton onClick={() => handleIncrement(p.id)} color="primary" size="small">
+                              <AddIcon fontSize="small" sx={{ fontSize: 16 }} />
+                            </IconButton>
+                          </Box>
+                          <Box sx={{ textAlign: 'right' }}>
+                            <Typography variant="body1" fontWeight="bold" color="#0f2352">
+                              {totalPrice.toLocaleString()} RSD<Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>(+PDV)</Typography>
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          size="medium"
+                          startIcon={<ShoppingCartIcon sx={{ fontSize: 20 }} />}
+                          onClick={() => orderProduct(p)}
+                          sx={{
+                            background: 'linear-gradient(135deg, #0f2352 0%, #1a3a82 100%)',
+                            borderRadius: 2,
+                            py: 1,
+                            textTransform: 'none',
+                            fontSize: '0.95rem',
+                            fontWeight: 'bold',
+                            boxShadow: '0 4px 14px rgba(15, 35, 82, 0.3)',
+                            '&:hover': {
+                              background: 'linear-gradient(135deg, #1a3b80 0%, #2e56c4 100%)',
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 8px 24px rgba(15, 35, 82, 0.4)',
+                            },
+                          }}
+                        >
+                          Dodaj {isBox ? 'pakovanje' : ''}
+                        </Button>
+                      </Box>
+                    )}
                   </CardContent>
                 </Card>
               </Grid>

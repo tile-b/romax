@@ -1,8 +1,10 @@
 const folija25 = require('./img/folija25.png');
 const folija5 = require('./img/folija5.png');
 const masinska = require('./img/masinski.png');
-const baby10 = require('./img/babyroll10.png');
-const baby25 = require('./img/babyroll25.png');
+const baby10 = require('./img/babyrol10.png');
+const baby15 = require('./img/babyrol15.png');
+const baby15v2 = require('./img/babyrol15v2.png');
+const baby10v2 = require('./img/babyrol10v2.png');
 
 const productsData = [
   // --- RUČNI STREČ ---
@@ -11,6 +13,7 @@ const productsData = [
     category: 'rucni',
     name: 'Ručna folija 2.5kg',
     img: folija25,
+    type: 'standard',
     priceRanges: [
       { min: 1, max: 9, price: 580 },
       { min: 10, max: 19, price: 530 },
@@ -22,6 +25,7 @@ const productsData = [
     category: 'rucni',
     name: 'Ručna folija 5kg',
     img: folija5,
+    type: 'standard',
     priceRanges: [
       { min: 1, max: 9, price: 890 },
       { min: 10, max: 19, price: 810 },
@@ -34,36 +38,55 @@ const productsData = [
     id: 3,
     category: 'masinski',
     name: 'Mašinska folija 16kg',
-    img: masinska, // Placeholder image
-    priceRanges: [
-      { min: 1, max: 9, price: 3500 },
-      { min: 10, max: 19, price: 3300 },
-      { min: 20, max: 30, price: 3100 },
-    ],
+    img: masinska,
+    type: 'informative',
+    pricePerKg: 167,
+    palletDetails: '48 rolni na paleti',
+    description: 'Prodaje se isključivo na paletu (48 rolni).',
   },
 
   // --- BABY ROLLS ---
+  // Box of 45
   {
     id: 4,
     category: 'baby',
-    name: 'Baby Rolls 10cm',
-    img: baby10, // Placeholder image
-    priceRanges: [
-      { min: 1, max: 19, price: 150 },
-      { min: 20, max: 49, price: 130 },
-      { min: 50, max: 100, price: 110 },
-    ],
+    name: 'Baby Rolls 10cm (Kutija 45 kom)',
+    img: baby10v2,
+    type: 'box',
+    piecesPerBox: 45,
+    pricePerPiece: 149,
+    width: '10cm',
   },
   {
     id: 5,
     category: 'baby',
-    name: 'Baby Rolls 25cm',
-    img: baby25, // Placeholder image
-    priceRanges: [
-      { min: 1, max: 19, price: 250 },
-      { min: 20, max: 49, price: 230 },
-      { min: 50, max: 100, price: 210 },
-    ],
+    name: 'Baby Rolls 15cm (Kutija 45 kom)',
+    img: baby15v2, // Using same image or placeholder if needed
+    type: 'box',
+    piecesPerBox: 45,
+    pricePerPiece: 179,
+    width: '15cm',
+  },
+  // Box of 25
+  {
+    id: 6,
+    category: 'baby',
+    name: 'Baby Rolls 10cm (Kutija 25 kom)',
+    img: baby10,
+    type: 'box',
+    piecesPerBox: 25,
+    pricePerPiece: 164,
+    width: '10cm',
+  },
+  {
+    id: 7,
+    category: 'baby',
+    name: 'Baby Rolls 15cm (Kutija 25 kom)',
+    img: baby15, // Using same image or placeholder
+    type: 'box',
+    piecesPerBox: 25,
+    pricePerPiece: 194,
+    width: '15cm',
   },
 ];
 
