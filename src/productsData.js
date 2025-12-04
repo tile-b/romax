@@ -42,10 +42,11 @@ const productsData = [
     type: 'informative',
     pricePerKg: 167,
     //palletDetails: '48 rolni na paleti',
-    //description: 'Prodaje se isključivo na paletu (48 rolni).',
+    //description: 'Prodaje se isključivo paletno.',
   },
 
   // --- BABY ROLLS ---
+
   // Box of 25
   {
     id: 4,
@@ -57,19 +58,10 @@ const productsData = [
     pricePerPiece: 164,
     width: '10cm',
   },
-  {
-    id: 5,
-    category: 'baby',
-    name: 'Baby Rolls 15cm (Kutija 25 kom)',
-    img: baby15, // Using same image or placeholder
-    type: 'box',
-    piecesPerBox: 25,
-    pricePerPiece: 194,
-    width: '15cm',
-  },
+
   // Box of 45
   {
-    id: 6,
+    id: 5,
     category: 'baby',
     name: 'Baby Rolls 10cm (Kutija 45 kom)',
     img: baby10v2,
@@ -77,6 +69,16 @@ const productsData = [
     piecesPerBox: 45,
     pricePerPiece: 149,
     width: '10cm',
+  },
+  {
+    id: 6,
+    category: 'baby',
+    name: 'Baby Rolls 15cm (Kutija 25 kom)',
+    img: baby15, // Using same image or placeholder
+    type: 'box',
+    piecesPerBox: 25,
+    pricePerPiece: 194,
+    width: '15cm',
   },
   {
     id: 7,
