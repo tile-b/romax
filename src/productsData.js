@@ -37,39 +37,18 @@ const productsData = [
   {
     id: 3,
     category: 'masinski',
-    name: 'Mašinska folija 16kg',
+    name: 'Standardna Mašinska folija 16kg',
     img: masinska,
     type: 'informative',
     pricePerKg: 167,
-    palletDetails: '48 rolni na paleti',
-    description: 'Prodaje se isključivo na paletu (48 rolni).',
+    //palletDetails: '48 rolni na paleti',
+    //description: 'Prodaje se isključivo na paletu (48 rolni).',
   },
 
   // --- BABY ROLLS ---
-  // Box of 45
-  {
-    id: 4,
-    category: 'baby',
-    name: 'Baby Rolls 10cm (Kutija 45 kom)',
-    img: baby10v2,
-    type: 'box',
-    piecesPerBox: 45,
-    pricePerPiece: 149,
-    width: '10cm',
-  },
-  {
-    id: 5,
-    category: 'baby',
-    name: 'Baby Rolls 15cm (Kutija 45 kom)',
-    img: baby15v2, // Using same image or placeholder if needed
-    type: 'box',
-    piecesPerBox: 45,
-    pricePerPiece: 179,
-    width: '15cm',
-  },
   // Box of 25
   {
-    id: 6,
+    id: 4,
     category: 'baby',
     name: 'Baby Rolls 10cm (Kutija 25 kom)',
     img: baby10,
@@ -79,13 +58,34 @@ const productsData = [
     width: '10cm',
   },
   {
-    id: 7,
+    id: 5,
     category: 'baby',
     name: 'Baby Rolls 15cm (Kutija 25 kom)',
     img: baby15, // Using same image or placeholder
     type: 'box',
     piecesPerBox: 25,
     pricePerPiece: 194,
+    width: '15cm',
+  },
+  // Box of 45
+  {
+    id: 6,
+    category: 'baby',
+    name: 'Baby Rolls 10cm (Kutija 45 kom)',
+    img: baby10v2,
+    type: 'box',
+    piecesPerBox: 45,
+    pricePerPiece: 149,
+    width: '10cm',
+  },
+  {
+    id: 7,
+    category: 'baby',
+    name: 'Baby Rolls 15cm (Kutija 45 kom)',
+    img: baby15v2, // Using same image or placeholder if needed
+    type: 'box',
+    piecesPerBox: 45,
+    pricePerPiece: 179,
     width: '15cm',
   },
 ];
