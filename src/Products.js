@@ -110,7 +110,7 @@ export default function Products() {
           }}
         >
           Vrhunska streč folija za sigurno i efikasno pakovanje. <br />
-          <span style={{ fontSize: '0.9em', opacity: 0.8 }}>Izaberite količinu da biste ostvarili popust.</span>
+          {/* <span style={{ fontSize: '0.9em', opacity: 0.8 }}>Izaberite količinu da biste ostvarili popust.</span> */}
         </Typography>
 
         {/* Category Filter */}
@@ -257,12 +257,12 @@ export default function Products() {
                     {/* Informative Type Display */}
                     {isInformative && (
                       <Box sx={{ mt: 'auto' }}>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        {/* <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                           {p.description}
                         </Typography>
                         <Typography variant="h6" color="#0f2352" fontWeight="bold">
                           {p.pricePerKg} RSD / kg<Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>(+PDV)</Typography>
-                        </Typography>
+                        </Typography> */}
 
                         <Box sx={{ mt: 2, p: 1, bgcolor: '#e3f2fd', borderRadius: 1, textAlign: 'center' }}>
                           <Typography variant="body2" fontWeight="bold" color="#1565c0">

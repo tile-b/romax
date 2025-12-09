@@ -27,9 +27,9 @@ const productsData = [
     img: folija5,
     type: 'standard',
     priceRanges: [
-      { min: 1, max: 9, price: 890 },
-      { min: 10, max: 19, price: 810 },
-      { min: 20, max: 30, price: 760 },
+      { min: 1, max: 9, price: 1050 },
+      { min: 10, max: 19, price: 950 },
+      { min: 20, max: 30, price: 900 },
     ],
   },
 
